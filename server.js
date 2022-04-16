@@ -1,14 +1,10 @@
 const express=require("express");
+const cors=require("cors")
 const app=express();
 const mongoose=require("mongoose")
 const dotenv=require("dotenv")
 
-const authRoute=require("./routes/auth");
-const userRoute=require("./routes/user");
-const productRoute=require("./routes/product")
-const orderRoute=require("./routes/order");
-const cartRoute=require("./routes/cart");
-const stripeRoute=require("./routes/stripe")
+
 
 dotenv.config();
 
@@ -20,11 +16,14 @@ mongoose
     })
 
 app.use(express.json())
-app.use("/api/auth",authRoute)
-app.use("/api/users",userRoute)
-app.use("/api/guitars",productRoute)
-app.use("/api/orders",orderRoute)
-app.use("/api/cart",cartRoute)
+app.use(cors())
+
+app.use("/api/auth",require("./routes/auth"))
+app.use("/api/users",require("./routes/user"))
+app.use("/api/guitars",require("./routes/product"))
+app.use("/api/orders",require("./routes/order"))
+app.use("/api/cart",require("./routes/cart"))
+app.use("/api/checkout",require("./routes/stripe"))
 
 app.get("/",(req,res)=>
     res.send("Connected")
