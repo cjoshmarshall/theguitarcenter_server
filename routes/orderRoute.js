@@ -1,13 +1,36 @@
 const router=require("express").Router();
-const Order=require("../models/order");
+const stripe=require("stripe")(process.env.STRIPE_SECRET_KEY);
+const { v4: uuidv4 } = require('uuid');
+const Order=require("../models/orderModel");
+const Cart=require('../models/cartModel')
 const { verifyToken,verifyTokenAndAuth, verifyTokenAndAdmin }=require("./verifyToken")
 
 
-router.post("/",verifyToken,async (req,res)=>{
-    const newOrder=new Order(req.body)
+router.post("/",async (req,res)=>{
     try{
-        const savedOrder=await newOrder.save()
-        res.status(200).json(savedOrder)
+        const customer=await stripe.customers.create({
+            source:req.body.tokenId,
+            email:req.body.email
+        })
+        const payment=await stripe.paymentIntents.create({            
+            amount:req.body.amount,
+            currency:"usd",
+            customer:customer.id,
+            receipt_email:req.body.email
+        },
+        {
+            idempotencyKey:uuidv4()
+        })
+        if(payment){
+            req.body.transactionId=payment.id
+            const newOrder=new Order(req.body)
+            const savedOrder=await newOrder.save()     
+            const newProduct=await Cart.findOne({_id:req.body.cart})
+            const savedProduct=await newProduct.save()
+            res.send("Your order is placed successfully") 
+        }else{
+            return res.status(400).json(err)
+        }
     }catch(err){
         res.status(500).json(err)
     }
@@ -35,14 +58,14 @@ router.delete("/:id",verifyTokenAndAdmin,async(req,res)=>{
 
 router.get("/find/:userId",verifyTokenAndAdmin,async(req,res)=>{
     try{
-        const orders=await Order.findOne({userId:req.params.userid})
+        const orders=await Order.findOne({userId:req.params.userId})
         res.status(200).json(orders)
     }catch(err){
         res.status(500).json(err)
     }
 })
 
-router.get("/",verifyTokenAndAdmin,async(req,res)=>{
+router.get("/",async(req,res)=>{
     try{
         const Orders=await Order.find()
         res.status(200).json(Orders)

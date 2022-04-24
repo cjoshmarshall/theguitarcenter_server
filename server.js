@@ -18,12 +18,13 @@ mongoose
 app.use(express.json())
 app.use(cors())
 
-app.use("/api/auth",require("./routes/auth"))
-app.use("/api/users",require("./routes/user"))
-app.use("/api/guitars",require("./routes/product"))
-app.use("/api/orders",require("./routes/order"))
-app.use("/api/cart",require("./routes/cart"))
-app.use("/api/checkout",require("./routes/stripe"))
+app.use("/api/auth",require("./routes/authRoute"))
+app.use("/api/users",require("./routes/userRoute"))
+app.use("/api/categories",require("./routes/categoryRoute"))
+app.use("/api/guitars",require("./routes/productRoute"))
+app.use("/api/orders",require("./routes/orderRoute"))
+// app.use("/api/cart",require("./routes/cartRoute"))
+app.use("/api/newsletter",require("./routes/newsletterRoute"))
 
 app.get("/",(req,res)=>
     res.send("Connected")

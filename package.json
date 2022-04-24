@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "mongoose": "^6.2.4",
     "nodemon": "^2.0.15",
     "react-router-dom": "^5.2.0",
-    "stripe": "^8.207.0"
+    "stripe": "^8.207.0",
+    "uuid": "^8.3.2"
   }
 }

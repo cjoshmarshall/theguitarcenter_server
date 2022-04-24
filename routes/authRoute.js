@@ -1,18 +1,16 @@
 const router=require("express").Router();
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
-
-const User=require("../models/user");
+const User=require("../models/userModel");
 
 router.post("/signup",async (req,res)=>{
-        const salt=await bcrypt.genSalt();
-        req.body.password=await bcrypt.hash(req.body.password,salt)
+    const {fname,lname,email,password}=req.body
 
+        const salt=await bcrypt.genSalt();
+        req.body.password=await bcrypt.hash(password,salt)
+        
     const newUser= await new User({
-        fname:req.body.fname,
-        lname:req.body.lname,
-        email:req.body.email,
-        password:req.body.password
+        fname,lname,email,password
     })
 
     try{
@@ -26,8 +24,10 @@ router.post("/signup",async (req,res)=>{
 
 router.post("/login",async (req,res)=>{
 
+    const {email,password}=req.body
+
     try{
-        const user=await User.findOne({email:req.body.email})
+        const user=await User.findOne({email})
         const match=await bcrypt.compare(req.body.password,user.password)
         const accessToken=jwt.sign(
             {

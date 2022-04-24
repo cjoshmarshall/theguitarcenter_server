@@ -1,14 +1,14 @@
 const mongoose=require("mongoose")
 
 const orderSchema=new mongoose.Schema({
-    userId:{type:String,required:true},
+    user:{type:mongoose.Schema.Types.ObjectId,ref:"users",required:true},
     products:[{
         productId:{type:String},
         quantity:{type:Number,default:1}
     }],
     amount:{type:Number,required:true},
-    address:{type:Object,required:true},
-    status:{type:String,default:"pending"}
+    status:{type:String,default:"Order Placed"},
+    transactionId:{type:String},
     },
     { timestamps:true }
 )
