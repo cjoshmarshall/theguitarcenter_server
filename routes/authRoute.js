@@ -2,6 +2,7 @@ const router=require("express").Router();
 const bcrypt=require("bcrypt");
 const jwt=require("jsonwebtoken");
 const User=require("../models/userModel");
+const { verifyToken } = require("./verifyToken");
 
 router.post("/signup",async (req,res)=>{
     const {fname,lname,email,password}=req.body

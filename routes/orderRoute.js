@@ -2,7 +2,6 @@ const router=require("express").Router();
 const stripe=require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { v4: uuidv4 } = require('uuid');
 const Order=require("../models/orderModel");
-const Cart=require('../models/cartModel')
 const { verifyToken,verifyTokenAndAuth, verifyTokenAndAdmin }=require("./verifyToken")
 
 
@@ -24,10 +23,8 @@ router.post("/",async (req,res)=>{
         if(payment){
             req.body.transactionId=payment.id
             const newOrder=new Order(req.body)
-            const savedOrder=await newOrder.save()     
-            const newProduct=await Cart.findOne({_id:req.body.cart})
-            const savedProduct=await newProduct.save()
-            res.send("Your order is placed successfully") 
+            const savedOrder=await newOrder.save()
+            return res.status(200).json(savedOrder)
         }else{
             return res.status(400).json(err)
         }
@@ -68,36 +65,8 @@ router.get("/find/:userId",verifyTokenAndAdmin,async(req,res)=>{
 router.get("/",async(req,res)=>{
     try{
         const Orders=await Order.find()
+        .populate("products")
         res.status(200).json(Orders)
-    }catch(err){
-        res.status(500).json(err)
-    }
-})
-
-
-router.get("/income",verifyTokenAndAdmin,async(req,res)=>{
-    const date=new Date();
-    const lastMonth=new Date(date.setMonth(date.getMonth()-1));
-    const previousMonth=new Date(new Date().setMonth(lastMonth.getMonth()-1));
-    try{
-        console.log("income")
-        const income= await Order.aggregate([
-            {$match:{createdAt:{$gte:previousMonth}}},
-            {
-                $project:{
-                    month:{$month:"$createdAt"},
-                    sales:"$amount"
-                }
-            },
-            {
-                $group:{
-                    _id:"$month",
-                    total:{$sum:"$sales"}
-                }
-            }
-        ])
-        console.log(income)
-        res.status(200).json(income)
     }catch(err){
         res.status(500).json(err)
     }
