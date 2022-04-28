@@ -28,6 +28,15 @@ app.use("/api/guitars",require("./routes/productRoute"))
 app.use("/api/orders",require("./routes/orderRoute"))
 app.use("/api/newsletter",require("./routes/newsletterRoute"))
 
+const path=require("path")
+
+if (process.env.NODE_ENV === "production") {
+    app.use("/",express.static("client/build"));
+    app.get("*", (req, res) => {
+      res.sendFile(path.resolve(__dirname, "client/build/index.html"));
+    });
+  }
+
 app.get("/",(req,res)=>
     res.send("Connected")
 )
