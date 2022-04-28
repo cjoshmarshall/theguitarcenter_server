@@ -26,7 +26,6 @@ app.use("/api/users",require("./routes/userRoute"))
 app.use("/api/categories",require("./routes/categoryRoute"))
 app.use("/api/guitars",require("./routes/productRoute"))
 app.use("/api/orders",require("./routes/orderRoute"))
-// app.use("/api/cart",require("./routes/cartRoute"))
 app.use("/api/newsletter",require("./routes/newsletterRoute"))
 
 app.get("/",(req,res)=>
