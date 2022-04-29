@@ -7,16 +7,16 @@ const { verifyToken } = require("./verifyToken");
 router.post("/signup",async (req,res)=>{
     const {fname,lname,email,password}=req.body
 
-        const salt=await bcrypt.genSalt();
-        req.body.password=await bcrypt.hash(password,salt)
+    const salt=await bcrypt.genSalt();
+    hashedPassword=await bcrypt.hash(password,salt)
         
-    const newUser= await new User({
-        fname,lname,email,password
+    const newUser=await new User({
+        fname,lname,email,password:hashedPassword
     })
 
     try{
-        await newUser.save()
-        res.status(200).json(newUser)
+        const savedUser=await newUser.save()
+        res.status(200).json(savedUser)
     }catch(err){
         res.status(500).json(err)
     }
