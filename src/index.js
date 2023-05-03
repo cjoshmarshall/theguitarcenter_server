@@ -11,6 +11,7 @@ mongoose
     useUnifiedTopology: true,
     useNewUrlParser: true,
   })
+  .then((db) => db.connection.readyState)
   .then(() => console.log("Database Connected"))
   .catch((err) => {
     console.log(err);
@@ -37,11 +38,9 @@ const path = require("path");
 
 app.get("/", (req, res) => res.send("Server Running"));
 
-
 // * Local Server
 // app.listen(process.env.PORT || 3006, () => {
 //   console.log("Connected");
 // });
-
 
 module.exports = app;
